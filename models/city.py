@@ -17,6 +17,10 @@ class City(BaseModel, Base):
             nullable=False
     )
     state = relationship("State", back_populates="cities")
+    places = relationship(
+            "Place",
+            back_populates='city',
+            cascade="all, delete, delete-orphan")
 
     def __repr__(self):
         """Representation of a City object"""
