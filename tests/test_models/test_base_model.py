@@ -7,9 +7,12 @@ from uuid import UUID
 import json
 import os
 
+HBNB_TYPE_STORAGE = os.getenv("HBNB_TYPE_STORAGE")
 
+
+@unittest.skipUnless(HBNB_TYPE_STORAGE == 'file', 'can only use file storage')
 class test_basemodel(unittest.TestCase):
-    """ """
+    """Test Base model"""
 
     def __init__(self, *args, **kwargs):
         """ """
@@ -42,10 +45,12 @@ class test_basemodel(unittest.TestCase):
     def test_kwargs_int(self):
         """ """
         i = self.value()
+        i.save()
         copy = i.to_dict()
         copy.update({1: 2})
         with self.assertRaises(TypeError):
             new = BaseModel(**copy)
+            new.save()
 
     def test_save(self):
         """ Testing save """
@@ -73,12 +78,14 @@ class test_basemodel(unittest.TestCase):
         n = {None: None}
         with self.assertRaises(TypeError):
             new = self.value(**n)
+            new.save()
 
     def test_kwargs_one(self):
         """ """
         n = {'Name': 'test'}
         with self.assertRaises(KeyError):
             new = self.value(**n)
+            new.save()
 
     def test_id(self):
         """ """
@@ -90,9 +97,11 @@ class test_basemodel(unittest.TestCase):
         new = self.value()
         self.assertEqual(type(new.created_at), datetime.datetime)
 
+    
     def test_updated_at(self):
         """ """
         new = self.value()
+        new.save()
         self.assertEqual(type(new.updated_at), datetime.datetime)
         n = new.to_dict()
         new = BaseModel(**n)

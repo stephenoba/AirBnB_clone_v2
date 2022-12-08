@@ -147,7 +147,8 @@ class HBNBCommand(cmd.Cmd):
                         # we can catch
                         value = self.types[name](value)
                     kwargs[name] = value
-        new_instance = HBNBCommand.classes[_cls]()
+        new_instance = HBNBCommand.classes[_cls](**kwargs)
+        new_instance.save()
         if kwargs:
             new_instance.__dict__.update(kwargs)
 
@@ -227,21 +228,16 @@ class HBNBCommand(cmd.Cmd):
 
     def do_all(self, args):
         """ Shows all objects, or all objects of a class"""
-        print_list = []
-
-        if args:
-            args = args.split(' ')[0]  # remove possible trailing args
-            if args not in HBNBCommand.classes:
+        arg = args.split(" ")[0]
+        if arg:
+            if arg in self.classes:
+                objects = storage.all(cls=arg)
+            else:
                 print("** class doesn't exist **")
                 return
-            for k, v in storage._FileStorage__objects.items():
-                if k.split('.')[0] == args:
-                    print_list.append(str(v))
         else:
-            for k, v in storage._FileStorage__objects.items():
-                print_list.append(str(v))
-
-        print(print_list)
+            objects = storage.all()
+        print(list(map(lambda x: str(x), objects.values())))
 
     def help_all(self):
         """ Help information for the all command """
