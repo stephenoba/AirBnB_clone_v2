@@ -149,10 +149,10 @@ class HBNBCommand(cmd.Cmd):
                     kwargs[name] = value
         new_instance = HBNBCommand.classes[_cls](**kwargs)
         new_instance.save()
-        if kwargs:
-            new_instance.__dict__.update(kwargs)
+        # if kwargs:
+        #     new_instance.__dict__.update(kwargs)
 
-        storage.save()
+        # storage.save()
         print(new_instance.id)
 
     def help_create(self):

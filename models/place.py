@@ -29,12 +29,10 @@ class Place(BaseModel, Base):
             String(60),
             ForeignKey('cities.id'),
             nullable=False)
-    city = relationship("City", back_populates="places")
     user_id = Column(
             String(60),
             ForeignKey('users.id'),
             nullable=False)
-    user = relationship("User", back_populates="places")
     name = Column(String(128), nullable=False)
     description = Column(String(1024))
     number_rooms = Column(Integer, nullable=False, default=0)
@@ -43,24 +41,29 @@ class Place(BaseModel, Base):
     price_by_night = Column(Integer, nullable=False, default=0)
     latitude = Column(Float)
     longitude = Column(Float)
-    reviews = relationship(
-            "Review",
-            back_populates='place',
-            cascade="all, delete, delete-orphan")
-    amenities = relationship(
-            'Amenity',
-            secondary='place_amenity',
-            viewonly=False)
+
+    if os.getenv("HBNB_TYPE_STORAGE") == "db":
+        reviews = relationship(
+                "Review",
+                back_populates='place',
+                cascade="all, delete, delete-orphan")
+        amenities = relationship(
+                'Amenity',
+                secondary='place_amenity',
+                viewonly=False)
+        user = relationship("User", back_populates="places")
+        city = relationship("City", back_populates="places")
+
     amenity_ids = []
 
-    if os.environ.get("HBNB_TYPE_STORAGE") != "db":
+    if os.getenv("HBNB_TYPE_STORAGE") != "db":
         @property
         def reviews(self):
-            """Get a list of all related City objects."""
+            """Get a list of all related Review objects."""
             reviews_list = []
             for review in list(models.storage.all(Review).values()):
                 if review.place_id == self.id:
-                    reviews_list.append(city)
+                    reviews_list.append(review)
             return reviews_list
 
         @property

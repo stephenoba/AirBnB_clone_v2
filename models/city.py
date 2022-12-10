@@ -1,5 +1,7 @@
 #!/usr/bin/python3
 """ City Module for HBNB project """
+import os
+
 from models.base_model import BaseModel, Base
 
 from sqlalchemy import Column, String, ForeignKey
@@ -16,11 +18,13 @@ class City(BaseModel, Base):
             ForeignKey('states.id'),
             nullable=False
     )
-    state = relationship("State", back_populates="cities")
-    places = relationship(
+
+    if os.getenv("HBNB_TYPE_STORAGE") == "db":
+        places = relationship(
             "Place",
             back_populates='city',
             cascade="all, delete, delete-orphan")
+        state = relationship("State", back_populates="cities")
 
     def __repr__(self):
         """Representation of a City object"""
