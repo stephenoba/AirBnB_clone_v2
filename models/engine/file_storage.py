@@ -54,6 +54,10 @@ class FileStorage:
             del obj
             self.save()
 
+    def close(self):
+        """Call the reload method."""
+        self.reload()
+
     # HELPER METHODS
     # =============================================
 
